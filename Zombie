@@ -2,7 +2,7 @@ package apcs;
 
 
 
-public class NewZombie{
+public class Zombie{
 
 	double x;
 	double y;
@@ -14,7 +14,7 @@ public class NewZombie{
 	int size;
 	int number;
 	
-	public NewZombie(String Type, int Id){
+	public Zombie(String Type, int Id){
 
 		number = Id;
 		
