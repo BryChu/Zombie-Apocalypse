@@ -3,7 +3,7 @@ package apcs;
 
 import java.util.ArrayList;
 
-public class Zombie_apocalypse {
+public class Zombie_Apocalypse {
 
 	/**
 	 * @param args
