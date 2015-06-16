@@ -1,0 +1,24 @@
+package apcs;
+
+
+public class Wall {
+
+	int x;
+	int y;
+	int height;
+	int width;
+	
+	public Wall(int X, int Y, int h, int w){
+		
+		x = X;
+		y = Y;
+		height = h;
+		width = w;
+	}
+	
+	public void Draw(){
+
+		Window.out.color("gray");
+		Window.out.rectangle(x, y, width, height);
+	}
+}
