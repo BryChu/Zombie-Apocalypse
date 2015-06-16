@@ -1,0 +1,122 @@
+package apcs;
+
+
+
+public class NewZombie{
+
+	double x;
+	double y;
+	double speed;
+	double rise;
+	double run;
+	int health;
+	int dead = 0;
+	int size;
+	int number;
+	
+	public NewZombie(String Type, int Id){
+
+		number = Id;
+		
+		if(Type.equals("large")){
+
+			speed = 1;
+			size = 15;
+			health = 20;
+		}
+
+		else if(Type.equals("small")){
+
+			speed = 6;
+			size = 7;
+			health = 5;
+		}
+
+		else if(Type.equals ("normal")){
+
+			speed = 3;
+			size = 10;
+			health = 10;
+		}
+
+		x = (Math.random() * 500);
+		y = (Math.random() * 500);
+		health = 10;
+	}
+
+
+	public void followPlayer(int playerX, int playerY){
+
+		rise = playerY - y;
+		run = playerX - x;
+		x = x + (speed/Math.sqrt(rise*rise + run*run) * run);
+		y = y + (speed/Math.sqrt(rise*rise + run*run) * rise);
+	}
+
+	public void draw(){
+
+		Window.out.color("green");
+		Window.out.circle((int)(x), (int)(y), size);
+		Window.out.color("black");
+		Window.out.print(number, (int)(x), (int)(y));
+	}
+
+
+	public void health(int bulletX, int bulletY){
+
+		if(Math.abs(bulletX - x) < 13 && Math.abs(bulletY - y) < 13){
+			
+			health = health - 5;
+			
+			if(health < 1){
+
+				dead = 1;
+			}
+		}
+	}
+
+	public void stop(String direction){
+
+		if(direction.equals("up")){
+
+			y = y - 1;
+		}
+
+		if(direction.equals("down")){
+
+			y = y + 1;
+		}
+
+		if(direction.equals("left")){
+
+			x = x - 1;
+		}
+
+		if(direction.equals("right")){
+
+			x = x + 1;
+		}
+
+
+
+		if(direction.equals("upW")){
+
+			y = y - (speed + 1);
+		}
+
+		if(direction.equals("downW")){
+
+			y = y + (speed + 1);
+		}
+
+		if(direction.equals("leftW")){
+
+			x = x - (speed + 1);
+		}
+
+		if(direction.equals("rightW")){
+
+			x = x + (speed + 1);
+		}
+	}
+}
