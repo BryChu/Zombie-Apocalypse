@@ -13,35 +13,40 @@ public class Zombie{
 	int dead = 0;
 	int size;
 	int number;
+	int verify;
+	int damage;
 	
 	public Zombie(String Type, int Id){
 
+		verify = 0;
 		number = Id;
 		
 		if(Type.equals("large")){
 
 			speed = 1;
 			size = 15;
-			health = 20;
+			health = 10;
+			damage = 4;
 		}
 
 		else if(Type.equals("small")){
 
-			speed = 6;
+			speed = 5;
 			size = 7;
-			health = 5;
+			health = 1;
+			damage = 1;
 		}
 
 		else if(Type.equals ("normal")){
 
 			speed = 3;
 			size = 10;
-			health = 10;
+			health = 2;
+			damage = 2;
 		}
 
 		x = (Math.random() * 500);
 		y = (Math.random() * 500);
-		health = 10;
 	}
 
 
@@ -54,24 +59,20 @@ public class Zombie{
 	}
 
 	public void draw(){
-
+		
+		Window.out.color("black");
 		Window.out.color("green");
 		Window.out.circle((int)(x), (int)(y), size);
-		Window.out.color("black");
-		Window.out.print(number, (int)(x), (int)(y));
 	}
 
 
-	public void health(int bulletX, int bulletY){
-
-		if(Math.abs(bulletX - x) < 13 && Math.abs(bulletY - y) < 13){
+	public void health(){
+		
+		health = health - 1;
 			
-			health = health - 5;
-			
-			if(health < 1){
+		if(health < 1){
 
-				dead = 1;
-			}
+			dead = 1;
 		}
 	}
 
@@ -118,5 +119,10 @@ public class Zombie{
 
 			x = x + (speed + 1);
 		}
+	}
+	
+	public void Verify(){
+		
+		verify = 1;
 	}
 }
