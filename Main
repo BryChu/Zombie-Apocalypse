@@ -1,0 +1,410 @@
+package apcs;
+
+
+import java.util.ArrayList;
+
+public class Zombie_Apocalypse {
+
+	/**
+	 * @param args
+	 */
+	
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		
+		Window.size (1000, 1000);
+		boolean start = false;
+		boolean alive = true;
+		int x = 0;
+		int y = 0;
+		int bulletCount = 0;
+		int coolDown = 500;
+		int health = 100;
+		int timer = 0;
+		int pastTimer = 0;
+		int pastTimer2 = 0;
+		int pastTimer3 = 0;
+		int zombieTimer = 0;
+		int round = 1;
+		int zombieCount = 5;
+		String weapon = "shotgun";
+		
+		ArrayList<Zombie> zombies = new ArrayList<Zombie>();
+
+		Bullet [] bullets = new Bullet[10];
+		
+		Wall [] Walls = new Wall[10];
+		
+		while(true){
+			
+			x = 0;
+			y = 0;
+			bulletCount = 0;
+			alive = true;
+			start = false;
+			health = 100;
+			timer = 0;
+			pastTimer = 0;
+			pastTimer2 = 0;
+			pastTimer3 = 0;
+			zombieTimer = 0;
+			round = 1;
+			weapon = "pistol";
+			zombieCount = 5;
+			
+			while(start == false){
+				
+				Window.out.background("white");
+				Window.out.color("black");
+				Window.out.print("start", 480, 500);
+				Window.frame();
+				if(Window.mouse.clicked() == true){
+					
+					start = true;
+				}
+				Window.sleep(20);
+			}
+			
+			zombies.clear();
+			
+			for(int i = 0; i < 5; i ++){
+				
+				zombies.add(new Zombie("normal", i));
+			}
+			
+			while(alive == true){
+				
+				Window.out.background("white");
+				
+				
+				//Z
+
+				for(Zombie joe : zombies){
+					
+					if(joe != null && joe.dead == 0){
+						
+						for(Wall bob : Walls){
+							
+							if(bob != null && (Math.abs(bob.x - joe.x) < bob.width/2 + 10 && joe.y > bob.y - bob.height/2 && joe.y < bob.y + bob.height/2)){
+								
+								if(joe.x < bob.x){
+									
+									joe.stop("leftW");
+								}
+								else{
+									
+									joe.stop("rightW");
+								}
+							}
+							
+							if(bob != null && (Math.abs(bob.y - joe.y) < bob.height/2 + 10 && joe.x > bob.x - bob.width/2 && joe.x < bob.x + bob.width/2)){
+								
+								if(joe.y < bob.y){
+									
+									joe.stop("upW");
+								}
+								else{
+									
+									joe.stop("downW");
+								}
+							}
+						}
+						
+						for(Zombie billy : zombies){
+							
+							if(billy != joe && billy != null && billy.dead == 0 && (Math.abs(billy.x - joe.x) < 5 || Math.abs(billy.y - joe.y) < 5)){
+								
+								if(joe.x < billy.x){
+									
+									joe.stop("left");
+								}
+								else if(joe.x > billy.x){
+									
+									joe.stop("right");
+								}
+								if(joe.y < billy.y){
+									
+									joe.stop("up");
+								}
+								else if(joe.y > billy.y){
+									
+									joe.stop("down");
+								}
+							}
+						}
+						
+						if(Math.abs(joe.x - x) < joe.size && Math.abs(joe.y - y) < joe.size && joe.dead == 0){
+							
+							health = health - joe.damage;
+						}
+						
+						for(Bullet poop : bullets){
+							
+							if(poop != null && poop.hit == 0 && Math.abs(poop.x - joe.x) < 13 && Math.abs(poop.y - joe.y) < 13){
+								
+								joe.health();
+								poop.checkHitZombie();
+							}
+						}
+					}
+					
+					if(joe.dead == 1 && joe.verify == 0){
+						
+						joe.Verify();
+						zombieCount --;
+					}
+					
+					if(joe.dead == 0){
+						
+						joe.followPlayer(x,y);
+						joe.draw();
+					}
+				}
+				
+				
+				// person
+				
+				Window.out.color("black");
+				Window.out.circle(x, y, 10);
+				if(Window.key.pressed("w")){
+					
+					y = y-7;
+				}
+				if(Window.key.pressed("s")){
+					
+					y = y+7;
+				}
+				if(Window.key.pressed("a")){
+					
+					x = x-7;
+				}
+				if(Window.key.pressed("d")){
+					
+					x = x+7;
+				}
+				if(health < 1){
+					
+					alive = false;
+				}
+				
+				//bullet
+				
+				if(bulletCount > 9){
+					
+					bulletCount = 0;
+				}
+				
+				for(Bullet poop : bullets){
+					
+					if(Window.mouse.clicked() == true && coolDown < 0){
+						
+						if(weapon.equals("pistol") == true){
+						
+							coolDown = 500;
+							bullets[bulletCount] = new Bullet(x, y, "pistol");
+							bulletCount = bulletCount + 1;
+						}
+						else if(weapon.equals("shotgun") == true){
+
+							for(int i = 0; i <= 14; i++){
+								
+								coolDown = 1700;
+								bullets[bulletCount] = new Bullet(x, y, "shotgun");
+								bulletCount = bulletCount + 1;
+								if(bulletCount > 9){
+									
+									bulletCount = 0;
+								}
+							}
+						}
+						else if(weapon.equals("machinegun") == true){
+							
+							coolDown = 100;
+							bullets[bulletCount] = new Bullet(x, y, "machinegun");
+							bulletCount = bulletCount + 1;
+						}
+					}
+					
+					if(poop != null && poop.hit == 0){
+						
+						for(Wall bob : Walls){
+							
+							if(bob != null){
+								
+								poop.checkHitWall(bob.x, bob.y, bob.width, bob.height);
+							}
+						}
+					}
+					
+					if(poop != null && poop.hit == 0){
+						
+						poop.goToTarget();
+						poop.draw();
+					}
+				}
+				
+				//Walls
+				
+				Walls[0] = new Wall(500,500,100,100);
+				Walls[1] = new Wall(250,250,150,20);
+				Walls[2] = new Wall(250,750,20,150);
+				Walls[3] = new Wall(750,250,20,150);
+				Walls[4] = new Wall(750,750,150,20);
+				
+				for(Wall bob : Walls){
+					
+					if(bob != null){
+						
+						bob.Draw();
+					}
+					
+					if(bob != null && (Math.abs(bob.x - x) < bob.width/2 + 10 && y > bob.y - bob.height/2 && y < bob.y + bob.height/2)){
+						
+						if(x < bob.x){
+							
+							x = x - 8;
+						}
+						else{
+							
+							x = x + 8;
+						}
+					}
+					
+					if(bob != null && (Math.abs(bob.y - y) < bob.height/2 + 10 && x > bob.x - bob.width/2 && x < bob.x + bob.width/2)){
+						
+						if(y < bob.y){
+							
+							y = y - 8;
+						}
+						else{
+							
+							y = y + 8;
+						}
+					}
+				}
+				
+				//spawning
+				
+				if(zombieTimer - pastTimer > 5 && round == 1 && zombieTimer < 60){
+					
+					zombies.add(new Zombie("normal", zombies.size()));
+					zombies.add(new Zombie("normal", zombies.size()));
+					zombies.add(new Zombie("normal", zombies.size()));
+					zombies.add(new Zombie("normal", zombies.size()));
+					zombies.add(new Zombie("normal", zombies.size()));
+					pastTimer = zombieTimer;
+					zombieCount += 5;
+				}
+				
+				if(round == 2){
+					
+					if(Window.key.pressed("1")){
+						
+						weapon = "pistol";
+					}
+					
+					if(Window.key.pressed("2")){
+						
+						weapon = "shotgun";
+					}
+						
+					if(zombieTimer - pastTimer3 > 5){
+							
+						zombies.add(new Zombie("large", zombies.size()));
+						zombieCount += 1;
+						pastTimer3 = zombieTimer;
+					}
+						
+					if(zombieTimer - pastTimer > 5 && zombieTimer < 90){
+							
+						zombies.add(new Zombie("normal", zombies.size()));
+						zombies.add(new Zombie("normal", zombies.size()));
+						zombies.add(new Zombie("normal", zombies.size()));
+						zombies.add(new Zombie("normal", zombies.size()));
+						zombies.add(new Zombie("normal", zombies.size()));
+						pastTimer = zombieTimer;
+						zombieCount += 5;
+					}
+				}
+				
+				if(round == 3){
+					
+					
+					if(Window.key.pressed("3")){
+						
+						weapon = "machinegun";
+					}
+					
+					if(zombieTimer - pastTimer2 > 1 && zombieTimer < 150){
+						
+						zombies.add(new Zombie("small", zombies.size()));
+						zombies.add(new Zombie("small", zombies.size()));
+						zombies.add(new Zombie("small", zombies.size()));
+						zombies.add(new Zombie("small", zombies.size()));
+						zombies.add(new Zombie("small", zombies.size()));
+						zombieCount +=5;
+						pastTimer2 = zombieTimer;
+					}
+				
+					if(zombieTimer - pastTimer > 5 && zombieTimer < 150){
+					
+						zombies.add(new Zombie("normal", zombies.size()));
+						zombies.add(new Zombie("normal", zombies.size()));
+						pastTimer = zombieTimer;
+						zombieCount += 2;
+					}
+				}
+				
+				//timer
+				
+				timer = timer + 38;
+				if(timer - 999/1000 > zombieTimer){
+					
+					zombieTimer = timer/1000;
+				}
+				
+				
+				//changing stages
+				
+				if(zombieTimer > 60 && round == 1 && zombieCount == 0){
+					
+					round = 2;
+					Window.out.background("black");
+					Window.out.color("white");
+					Window.out.print("Round 2", 470, 600);
+					Window.frame();
+					Window.sleep(3000);
+				}
+				
+				if(zombieTimer > 90 && round == 2 && zombieCount == 0){
+					
+					round = 3;
+					Window.out.background("black");
+					Window.out.color("white");
+					Window.out.print("Round 3", 470, 600);
+					Window.frame();
+					Window.sleep(3000);
+				}
+				
+				if(zombieTimer > 150 && round == 3 && zombieCount == 0){
+					
+					round = 4;
+					Window.out.background("black");
+					Window.out.color("white");
+					Window.out.print("Round 4", 470, 600);
+					Window.frame();
+					Window.sleep(3000);
+				}
+				
+				//other stuff
+				
+				Window.out.color("black");
+				Window.out.print(health, 490, 500);
+				coolDown = coolDown - 50;
+				Window.sleep(1);
+				Window.frame();
+				}
+			}
+		}
+	}
+	
