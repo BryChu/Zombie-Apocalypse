@@ -1,0 +1,109 @@
+package apcs;
+
+
+
+public class Bullet {
+	
+	double x;
+	double y;
+	double targetX;
+	double targetY;
+	double rise;
+	double run;
+	double speed = 30;
+	int hit = 0;
+	int hi;
+	
+	public Bullet(int playerX, int playerY, String weapon){
+		
+		hi = 0;
+		x = playerX;
+		y = playerY;
+		hit = 0;
+		
+		if(weapon.equals("pistol") == true){
+			
+			targetX = Window.mouse.getX();
+			targetY = Window.mouse.getY();
+			rise = targetY - y;
+			run = targetX - x;
+		}
+
+		if(weapon.equals("shotgun") == true){
+
+			if(Math.random() < 0.5){
+			
+				targetX = Window.mouse.getX() + Math.random() * 50;
+				speed = 35 + Math.random() * 10;
+			}
+			else{
+
+				targetX = Window.mouse.getX() - Math.random() * 50;
+				speed = 35 - Math.random() * 10;
+			}
+			
+			if(Math.random() < 0.5){
+				
+				targetY = Window.mouse.getY() + Math.random() * 50;
+				
+			}
+			else{
+				
+				targetY = Window.mouse.getY() - Math.random() * 50;
+			}
+			
+			rise = targetY - y;
+			run = targetX - x;
+		}
+		
+		if(weapon.equals("machinegun") == true){
+
+			if(Math.random() < 0.5){
+			
+				targetX = Window.mouse.getX() + Math.random() * 20;
+			}
+			else{
+
+				targetX = Window.mouse.getX() - Math.random() * 20;
+			}
+			
+			if(Math.random() < 0.5){
+				
+				targetY = Window.mouse.getY() + Math.random() * 20;
+				
+			}
+			else{
+				
+				targetY = Window.mouse.getY() - Math.random() * 20;
+			}
+			
+			rise = targetY - y;
+			run = targetX - x;
+		}
+	}
+	
+	public void goToTarget(){
+		
+		x = x + (speed/Math.sqrt(rise*rise + run*run) * run);
+		y = y + (speed/Math.sqrt(rise*rise + run*run) * rise);
+	}
+	
+	public void draw(){
+		
+		Window.out.color("black");
+		Window.out.circle((int)(x), (int)(y), 3);
+	}
+
+	public void checkHitZombie(){
+		
+		hit = 1;
+	}
+	
+	public void checkHitWall(int wallX, int wallY, int width, int height){
+		
+		if(Math.abs(wallX - x) < width * 0.6 && Math.abs(wallY - y) < height * 0.6){
+			
+			hit = 1;
+		}
+	}
+}
