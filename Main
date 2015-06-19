@@ -23,15 +23,17 @@ public class Zombie_Apocalypse {
 		int timer = 0;
 		int pastTimer = 0;
 		int pastTimer2 = 0;
+		int pastTimer3 = 0;
 		int zombieTimer = 0;
 		int round = 1;
+		int zombieCount = 5;
 		String weapon = "shotgun";
 		
-		ArrayList<NewZombie> zombies = new ArrayList<NewZombie>();
+		ArrayList<Zombie> zombies = new ArrayList<Zombie>();
 
 		Bullet [] bullets = new Bullet[10];
 		
-		wall [] walls = new wall[10];
+		Wall [] Walls = new Wall[10];
 		
 		while(true){
 			
@@ -43,9 +45,12 @@ public class Zombie_Apocalypse {
 			health = 100;
 			timer = 0;
 			pastTimer = 0;
+			pastTimer2 = 0;
+			pastTimer3 = 0;
 			zombieTimer = 0;
 			round = 1;
 			weapon = "pistol";
+			zombieCount = 5;
 			
 			while(start == false){
 				
@@ -60,9 +65,11 @@ public class Zombie_Apocalypse {
 				Window.sleep(20);
 			}
 			
+			zombies.clear();
+			
 			for(int i = 0; i < 5; i ++){
 				
-				zombies.add(new NewZombie("normal", i));
+				zombies.add(new Zombie("normal", i));
 			}
 			
 			while(alive == true){
@@ -72,16 +79,11 @@ public class Zombie_Apocalypse {
 				
 				//Z
 
-				for(NewZombie joe : zombies){
-					
-					if(joe != null && joe.dead == 1){
-						
-						zombies.remove(0);
-					}
+				for(Zombie joe : zombies){
 					
 					if(joe != null && joe.dead == 0){
 						
-						for(wall bob : walls){
+						for(Wall bob : Walls){
 							
 							if(bob != null && (Math.abs(bob.x - joe.x) < bob.width/2 + 10 && joe.y > bob.y - bob.height/2 && joe.y < bob.y + bob.height/2)){
 								
@@ -108,7 +110,7 @@ public class Zombie_Apocalypse {
 							}
 						}
 						
-						for(NewZombie billy : zombies){
+						for(Zombie billy : zombies){
 							
 							if(billy != joe && billy != null && billy.dead == 0 && (Math.abs(billy.x - joe.x) < 5 || Math.abs(billy.y - joe.y) < 5)){
 								
@@ -131,18 +133,25 @@ public class Zombie_Apocalypse {
 							}
 						}
 						
-						if(Math.abs(joe.x - x) < 10 && Math.abs(joe.y - y) < 10 && joe.dead == 0){
+						if(Math.abs(joe.x - x) < joe.size && Math.abs(joe.y - y) < joe.size && joe.dead == 0){
 							
-							health = health - 1;
+							health = health - joe.damage;
 						}
 						
 						for(Bullet poop : bullets){
 							
-							if(poop != null && poop.hit == 0){
+							if(poop != null && poop.hit == 0 && Math.abs(poop.x - joe.x) < 13 && Math.abs(poop.y - joe.y) < 13){
 								
-								joe.health((int)(poop.x), (int)(poop.y));
+								joe.health();
+								poop.checkHitZombie();
 							}
 						}
+					}
+					
+					if(joe.dead == 1 && joe.verify == 0){
+						
+						joe.Verify();
+						zombieCount --;
 					}
 					
 					if(joe.dead == 0){
@@ -191,13 +200,13 @@ public class Zombie_Apocalypse {
 						
 						if(weapon.equals("pistol") == true){
 						
-							coolDown = 300;
+							coolDown = 500;
 							bullets[bulletCount] = new Bullet(x, y, "pistol");
 							bulletCount = bulletCount + 1;
 						}
 						else if(weapon.equals("shotgun") == true){
 
-							for(int i = 0; i <= 4; i++){
+							for(int i = 0; i <= 14; i++){
 								
 								coolDown = 1700;
 								bullets[bulletCount] = new Bullet(x, y, "shotgun");
@@ -208,15 +217,21 @@ public class Zombie_Apocalypse {
 								}
 							}
 						}
+						else if(weapon.equals("machinegun") == true){
+							
+							coolDown = 100;
+							bullets[bulletCount] = new Bullet(x, y, "machinegun");
+							bulletCount = bulletCount + 1;
+						}
 					}
 					
 					if(poop != null && poop.hit == 0){
 						
-						for(NewZombie joe : zombies){
+						for(Wall bob : Walls){
 							
-							if(joe.dead == 0){
+							if(bob != null){
 								
-								poop.checkHit(joe.x, joe.y);
+								poop.checkHitWall(bob.x, bob.y, bob.width, bob.height);
 							}
 						}
 					}
@@ -228,31 +243,60 @@ public class Zombie_Apocalypse {
 					}
 				}
 				
-				//walls
+				//Walls
 				
-				walls[0] = new wall(500,500,100,100);
-				walls[1] = new wall(250,250,150,20);
-				walls[2] = new wall(250,750,20,150);
-				walls[3] = new wall(750,250,20,150);
-				walls[4] = new wall(750,750,150,20);
+				Walls[0] = new Wall(500,500,100,100);
+				Walls[1] = new Wall(250,250,150,20);
+				Walls[2] = new Wall(250,750,20,150);
+				Walls[3] = new Wall(750,250,20,150);
+				Walls[4] = new Wall(750,750,150,20);
 				
-				for(wall bob : walls){
+				for(Wall bob : Walls){
 					
 					if(bob != null){
 						
 						bob.Draw();
 					}
-				}
-				
-				//other stuff
-				
-				if(zombieTimer - pastTimer > 1){
 					
-					zombies.add(new NewZombie("normal", zombies.size()));
-					pastTimer = zombieTimer;
+					if(bob != null && (Math.abs(bob.x - x) < bob.width/2 + 10 && y > bob.y - bob.height/2 && y < bob.y + bob.height/2)){
+						
+						if(x < bob.x){
+							
+							x = x - 8;
+						}
+						else{
+							
+							x = x + 8;
+						}
+					}
+					
+					if(bob != null && (Math.abs(bob.y - y) < bob.height/2 + 10 && x > bob.x - bob.width/2 && x < bob.x + bob.width/2)){
+						
+						if(y < bob.y){
+							
+							y = y - 8;
+						}
+						else{
+							
+							y = y + 8;
+						}
+					}
 				}
 				
-				if(round > 1){
+				//spawning
+				
+				if(zombieTimer - pastTimer > 5 && round == 1 && zombieTimer < 60){
+					
+					zombies.add(new Zombie("normal", zombies.size()));
+					zombies.add(new Zombie("normal", zombies.size()));
+					zombies.add(new Zombie("normal", zombies.size()));
+					zombies.add(new Zombie("normal", zombies.size()));
+					zombies.add(new Zombie("normal", zombies.size()));
+					pastTimer = zombieTimer;
+					zombieCount += 5;
+				}
+				
+				if(round == 2){
 					
 					if(Window.key.pressed("1")){
 						
@@ -263,15 +307,55 @@ public class Zombie_Apocalypse {
 						
 						weapon = "shotgun";
 					}
-					
-					if(zombieTimer - pastTimer2 > 2){
 						
-						zombies.add(new NewZombie("small", zombies.size()));
-						zombies.add(new NewZombie("small", zombies.size()));
-						zombies.add(new NewZombie("small", zombies.size()));
-						pastTimer2 = zombieTimer;
+					if(zombieTimer - pastTimer3 > 5){
+							
+						zombies.add(new Zombie("large", zombies.size()));
+						zombieCount += 1;
+						pastTimer3 = zombieTimer;
+					}
+						
+					if(zombieTimer - pastTimer > 5 && zombieTimer < 90){
+							
+						zombies.add(new Zombie("normal", zombies.size()));
+						zombies.add(new Zombie("normal", zombies.size()));
+						zombies.add(new Zombie("normal", zombies.size()));
+						zombies.add(new Zombie("normal", zombies.size()));
+						zombies.add(new Zombie("normal", zombies.size()));
+						pastTimer = zombieTimer;
+						zombieCount += 5;
 					}
 				}
+				
+				if(round == 3){
+					
+					
+					if(Window.key.pressed("3")){
+						
+						weapon = "machinegun";
+					}
+					
+					if(zombieTimer - pastTimer2 > 1 && zombieTimer < 150){
+						
+						zombies.add(new Zombie("small", zombies.size()));
+						zombies.add(new Zombie("small", zombies.size()));
+						zombies.add(new Zombie("small", zombies.size()));
+						zombies.add(new Zombie("small", zombies.size()));
+						zombies.add(new Zombie("small", zombies.size()));
+						zombieCount +=5;
+						pastTimer2 = zombieTimer;
+					}
+				
+					if(zombieTimer - pastTimer > 5 && zombieTimer < 150){
+					
+						zombies.add(new Zombie("normal", zombies.size()));
+						zombies.add(new Zombie("normal", zombies.size()));
+						pastTimer = zombieTimer;
+						zombieCount += 2;
+					}
+				}
+				
+				//timer
 				
 				timer = timer + 38;
 				if(timer - 999/1000 > zombieTimer){
@@ -279,7 +363,10 @@ public class Zombie_Apocalypse {
 					zombieTimer = timer/1000;
 				}
 				
-				if(zombieTimer > 0 && round == 1 && zombies.size() == 0){
+				
+				//changing stages
+				
+				if(zombieTimer > 60 && round == 1 && zombieCount == 0){
 					
 					round = 2;
 					Window.out.background("black");
@@ -289,7 +376,7 @@ public class Zombie_Apocalypse {
 					Window.sleep(3000);
 				}
 				
-				if(zombieTimer > 90 && round == 2){
+				if(zombieTimer > 90 && round == 2 && zombieCount == 0){
 					
 					round = 3;
 					Window.out.background("black");
@@ -299,13 +386,24 @@ public class Zombie_Apocalypse {
 					Window.sleep(3000);
 				}
 				
+				if(zombieTimer > 150 && round == 3 && zombieCount == 0){
+					
+					round = 4;
+					Window.out.background("black");
+					Window.out.color("white");
+					Window.out.print("Round 4", 470, 600);
+					Window.frame();
+					Window.sleep(3000);
+				}
+				
+				//other stuff
+				
 				Window.out.color("black");
-				Window.out.print(zombies.size(), 300, 300);
 				Window.out.print(health, 490, 500);
 				coolDown = coolDown - 50;
 				Window.sleep(1);
 				Window.frame();
+				}
 			}
 		}
 	}
-}
