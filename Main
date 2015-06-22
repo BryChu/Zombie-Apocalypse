@@ -329,6 +329,15 @@ public class Zombie_Apocalypse {
 				
 				if(round == 3){
 					
+					if(Window.key.pressed("1")){
+						
+						weapon = "pistol";
+					}
+					
+					if(Window.key.pressed("2")){
+						
+						weapon = "shotgun";
+					}
 					
 					if(Window.key.pressed("3")){
 						
@@ -343,6 +352,44 @@ public class Zombie_Apocalypse {
 						zombies.add(new Zombie("small", zombies.size()));
 						zombies.add(new Zombie("small", zombies.size()));
 						zombieCount +=5;
+						pastTimer2 = zombieTimer;
+					}
+				
+					if(zombieTimer - pastTimer > 5 && zombieTimer < 150){
+					
+						zombies.add(new Zombie("normal", zombies.size()));
+						zombies.add(new Zombie("normal", zombies.size()));
+						pastTimer = zombieTimer;
+						zombieCount += 2;
+					}
+				}
+				
+				if(round == 4){
+					
+					if(Window.key.pressed("1")){
+						
+						weapon = "pistol";
+					}
+					
+					if(Window.key.pressed("2")){
+						
+						weapon = "shotgun";
+					}
+					
+					if(Window.key.pressed("3")){
+						
+						weapon = "machinegun";
+					}
+					
+					if(Window.key.pressed("4")){
+						
+						weapon = "sniper"
+					}
+					
+					if(zombieTimer - pastTimer2 > 10 && zombieTimer < 180){
+						
+						zombies.add(new Zombie("Xlarge", zombies.size()));
+						zombieCount +=1;
 						pastTimer2 = zombieTimer;
 					}
 				
